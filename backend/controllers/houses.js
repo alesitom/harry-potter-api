@@ -1,16 +1,17 @@
-//const allHouses = require('./../models/houses')
-const { restart } = require('nodemon');
 const House = require ('./../models/houses')
+const {findAll, findById} = require ('./../services/common');
+const {paginationInfo} = require ('./../services/pagination');
 
-const all = (req, res) => {
-    res.json({ message: 'Casas'});
+const all =  async (req, res) => {
+    const data = await findAll(House, req.query.page);
+    const info = await paginationInfo({req, model: House});
+    res.json({info, data});
 };
 
-const single = (req, res) => {
-    console.log(req.params);
-    res.json({ message : `Buscaste: ${req.params.id}`});
+const single = async (req, res) => {
+    const data = await findById(House, req.params.id);
+    res.json(data);
 };
-
 
 const create = async (req, res) => {
     try {
@@ -22,6 +23,5 @@ const create = async (req, res) => {
         res.status(500).json({ message: "Error"});
     }
 };
-
 
 module.exports = { all, single, create };
